@@ -1,6 +1,6 @@
 # expenses
 
-A new Flutter application.
+A Flutter application to organize your expenses
 
 ## Getting Started
 

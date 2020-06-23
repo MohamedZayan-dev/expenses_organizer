@@ -5,6 +5,8 @@ const kSignUpScreen = 'signUp_screen';
 const kLoginScreen = 'Login_screen';
 const kExpenseList = 'expense_list_screen';
 
+const kIsLoggedIn = 'logged_in';
+
 const Color kBackgroundColor = Color(0xb31E265C);
 const Color kMainColor = Color(0xffE99F3F);
 const Color kSecondaryBackGroundColor = Color(0x54D26FB5);

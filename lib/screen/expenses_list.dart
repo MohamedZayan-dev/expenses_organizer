@@ -6,21 +6,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExpensesList extends StatelessWidget {
   Firestore firestore = Firestore.instance;
   String type, title, price;
-  void getExpense() async {
-    await for (var snapShot in firestore.collection('expense').snapshots()) {
-      for (var expense in snapShot.documents) print(expense.data);
-    }
+
+  Future<bool> _isLogged() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setBool(kIsLoggedIn, true);
+    return sharedPreferences.getBool(kIsLoggedIn);
   }
 
   @override
   Widget build(BuildContext context) {
-    getExpense();
+    _isLogged().then((onValue) {
+      print(onValue.toString());
+    });
+
     double scrreenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: kBackgroundColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -77,15 +81,21 @@ class ExpensesList extends StatelessWidget {
                 if (snapShot.hasData) {
                   final expenseDoc = snapShot.data.documents;
 
-                  for (var doc in expenseDoc) {
-                    type = doc.data['type'];
-                    price = doc.data['price'];
-                    title = doc.data['title'];
+                  for (int i = 0; i < expenseDoc.length; i++) {
+                    type = expenseDoc[i].data['type'];
+                    price = expenseDoc[i].data['price'];
+                    title = expenseDoc[i].data['title'];
                     expenseDetails.add(
                       ExpenseDetails(
                         title: title,
                         amount: double.parse(price),
                         type: type,
+                        onLongPress: () async {
+                          await Firestore.instance.runTransaction(
+                              (Transaction myTransaction) async {
+                            await myTransaction.delete(expenseDoc[i].reference);
+                          });
+                        },
                       ),
                     );
                   }

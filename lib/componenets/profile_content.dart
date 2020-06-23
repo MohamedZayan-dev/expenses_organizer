@@ -75,13 +75,6 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getLoggedInUser();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

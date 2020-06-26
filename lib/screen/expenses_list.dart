@@ -8,22 +8,32 @@ import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ExpensesList extends StatelessWidget {
+class ExpensesList extends StatefulWidget {
+  @override
+  _ExpensesListState createState() => _ExpensesListState();
+}
+
+class _ExpensesListState extends State<ExpensesList> {
   Firestore firestore = Firestore.instance;
+
   String type, title, price;
 
-  Future<bool> _isLogged() async {
+  Future _isLogged() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setBool(kIsLoggedIn, true);
-    return sharedPreferences.getBool(kIsLoggedIn);
+    await sharedPreferences.setBool(kIsLoggedIn, true);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _isLogged().then((onValue) {
+      print(onValue.toString());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _isLogged().then((onValue) {
-      print(onValue.toString());
-    });
-
     double scrreenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: kBackgroundColor,

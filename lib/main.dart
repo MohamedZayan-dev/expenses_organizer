@@ -8,26 +8,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() => runApp(Expenses());
 
 class Expenses extends StatelessWidget {
-  bool loggedIn;
+  bool loggedIn = false;
 
-  Future<bool> isLoggedIn() async {
+  Future isLoggedIn() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
-    return sharedPreferences.getBool(kIsLoggedIn);
+    if (sharedPreferences.getBool(kIsLoggedIn) == null) {
+      await sharedPreferences.setBool(kIsLoggedIn, false);
+    }
+    loggedIn = sharedPreferences.getBool(kIsLoggedIn);
   }
 
   @override
   Widget build(BuildContext context) {
-    isLoggedIn().then((onValue) {
-      loggedIn = onValue;
-      print("is logged in ? " + loggedIn.toString());
-    });
     return MaterialApp(
-      home: loggedIn == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : loggedIn ? ExpensesList() : Signup(),
+      home: FutureBuilder(
+        future: isLoggedIn(),
+        builder: (context, snapshot) {
+          return loggedIn ? ExpensesList() : Signup();
+        },
+      ),
       routes: {
         kSignUpScreen: (context) => Signup(),
         kLoginScreen: (context) => Login(),

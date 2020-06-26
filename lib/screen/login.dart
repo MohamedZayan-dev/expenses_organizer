@@ -5,12 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   String email;
+
   String password;
+
   GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+
   Future<void> myGoogleSignIn(BuildContext context) async {
     try {
       GoogleSignInAccount signedInAccount = await googleSignIn.signIn();
@@ -25,6 +35,20 @@ class Login extends StatelessWidget {
     } catch (error) {
       print(error);
     }
+  }
+
+  Future isLogged() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setBool(kIsLoggedIn, false);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLogged().then((val) {
+      print("is logged in whyyy? " + val.toString());
+    });
   }
 
   @override
